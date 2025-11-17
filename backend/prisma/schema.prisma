@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Note: SQLite doesn't support native enums
+// These are stored as TEXT and validated in the application layer
+// For PostgreSQL migration, uncomment the enum declarations below
+
+// enum UserRole {
+//   USER
+//   ADMIN
+//   SUPER_ADMIN
+// }
+
+// enum UserStatus {
+//   ACTIVE
+//   INACTIVE
+//   SUSPENDED
+// }
+
+// enum TransactionType {
+//   INCOME
+//   EXPENSE
+// }
+
+// enum BudgetPeriod {
+//   MONTHLY
+//   YEARLY
+// }
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  password      String
+  firstName     String        @map("first_name")
+  lastName      String        @map("last_name")
+  role          String        @default("USER")          // UserRole enum
+  status        String        @default("ACTIVE")        // UserStatus enum
+  refreshToken  String?       @map("refresh_token")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  transactions  Transaction[]
+  budgets       Budget[]
+
+  @@map("users")
+}
+
+model Category {
+  id            String            @id @default(uuid())
+  name          String
+  type          String                                  // TransactionType enum
+  icon          String?
+  color         String?
+  isDefault     Boolean           @default(false) @map("is_default")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  transactions  Transaction[]
+  budgets       Budget[]
+
+  @@unique([name, type], name: "name_type")
+  @@map("categories")
+}
+
+model Transaction {
+  id            String            @id @default(uuid())
+  userId        String            @map("user_id")
+  amount        Decimal
+  type          String                                  // TransactionType enum
+  categoryId    String            @map("category_id")
+  description   String?
+  date          DateTime
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category      Category          @relation(fields: [categoryId], references: [id])
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([date])
+  @@map("transactions")
+}
+
+model Budget {
+  id            String          @id @default(uuid())
+  userId        String          @map("user_id")
+  categoryId    String          @map("category_id")
+  amount        Decimal
+  period        String                                  // BudgetPeriod enum
+  startDate     DateTime        @map("start_date")
+  endDate       DateTime        @map("end_date")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category      Category        @relation(fields: [categoryId], references: [id])
+
+  @@index([userId])
+  @@index([categoryId])
+  @@map("budgets")
+}

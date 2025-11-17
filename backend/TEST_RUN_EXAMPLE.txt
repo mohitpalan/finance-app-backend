@@ -1,0 +1,518 @@
+================================================================================
+FINANCE APP API ENDPOINT TESTS - EXAMPLE RUN OUTPUT
+================================================================================
+
+This document shows what a successful test run looks like.
+
+================================================================================
+FINANCE APP API ENDPOINT TESTS
+Testing API at: http://localhost:3000/api/v1
+Timestamp: 2024-11-17T10:35:22.456Z
+================================================================================
+
+--------------------------------------------------------------------------------
+Health Check
+--------------------------------------------------------------------------------
+REQUEST: GET /health
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": {
+    "status": "healthy",
+    "timestamp": "2024-11-17T10:35:22.456Z",
+    "services": {
+      "database": "up"
+    }
+  }
+}
+✓ PASS: Health Check
+
+--------------------------------------------------------------------------------
+Authentication Tests
+--------------------------------------------------------------------------------
+
+Testing User Login...
+REQUEST: POST /auth/login
+BODY: {
+  "email": "user@financeapp.com",
+  "password": "User123!"
+}
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expiresIn": 3600
+  },
+  "message": "Login successful"
+}
+Access Token: eyJhbGciOiJIUzI1NiIsI...
+✓ PASS: User Login
+
+Testing Admin Login...
+REQUEST: POST /auth/login
+BODY: {
+  "email": "admin@financeapp.com",
+  "password": "Admin123!"
+}
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expiresIn": 3600
+  },
+  "message": "Login successful"
+}
+Access Token: eyJhbGciOiJIUzI1NiIsI...
+✓ PASS: Admin Login
+
+Testing Get Current User...
+REQUEST: GET /auth/me
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "email": "user@financeapp.com",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2024-11-17T10:30:00.000Z"
+  }
+}
+✓ PASS: Get Current User
+
+--------------------------------------------------------------------------------
+Categories Tests
+--------------------------------------------------------------------------------
+
+Testing Get All Categories...
+REQUEST: GET /categories
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "name": "Salary",
+      "type": "INCOME",
+      "icon": "💰",
+      "color": "#10b981",
+      "isDefault": true
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440003",
+      "name": "Freelance",
+      "type": "INCOME",
+      "icon": "💼",
+      "color": "#3b82f6",
+      "isDefault": true
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440004",
+      "name": "Food & Dining",
+      "type": "EXPENSE",
+      "icon": "🍽️",
+      "color": "#ef4444",
+      "isDefault": true
+    }
+  ]
+}
+Sample categories:
+  - 💰 Salary (INCOME)
+  - 💼 Freelance (INCOME)
+  - 🍽️ Food & Dining (EXPENSE)
+✓ PASS: Get All Categories - Total: 16 (Income: 5, Expense: 11)
+
+--------------------------------------------------------------------------------
+Transactions Tests
+--------------------------------------------------------------------------------
+
+Testing Get All Transactions...
+REQUEST: GET /transactions
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": {
+    "data": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440005",
+        "userId": "550e8400-e29b-41d4-a716-446655440001",
+        "amount": "5000.00",
+        "type": "INCOME",
+        "categoryId": "550e8400-e29b-41d4-a716-446655440002",
+        "category": {
+          "name": "Salary",
+          "icon": "💰"
+        },
+        "description": "Monthly salary",
+        "date": "2024-11-01T00:00:00.000Z"
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440006",
+        "userId": "550e8400-e29b-41d4-a716-446655440001",
+        "amount": "150.50",
+        "type": "EXPENSE",
+        "categoryId": "550e8400-e29b-41d4-a716-446655440010",
+        "category": {
+          "name": "Groceries",
+          "icon": "🛒"
+        },
+        "description": "Weekly groceries",
+        "date": "2024-11-05T00:00:00.000Z"
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440007",
+        "userId": "550e8400-e29b-41d4-a716-446655440001",
+        "amount": "45.00",
+        "type": "EXPENSE",
+        "categoryId": "550e8400-e29b-41d4-a716-446655440008",
+        "category": {
+          "name": "Transportation",
+          "icon": "🚗"
+        },
+        "description": "Gas refill",
+        "date": "2024-11-06T00:00:00.000Z"
+      }
+    ],
+    "meta": {
+      "page": 1,
+      "limit": 20,
+      "total": 12,
+      "pages": 1
+    }
+  }
+}
+Sample transactions:
+  - INCOME 5000.00 - Monthly salary
+  - EXPENSE 150.50 - Weekly groceries
+  - EXPENSE 45.00 - Gas refill
+✓ PASS: Get All Transactions - Total: 12 (Income: 2, Expense: 10)
+
+Testing Get Transaction Statistics...
+REQUEST: GET /transactions/statistics
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": {
+    "totalIncome": "5500.00",
+    "totalExpenses": "3022.15",
+    "net": "2477.85",
+    "byCategory": {
+      "Salary": "5000.00",
+      "Freelance": "500.00",
+      "Groceries": "150.50",
+      "Transportation": "45.00",
+      "Food & Dining": "121.75",
+      "Entertainment": "65.00",
+      "Bills & Utilities": "120.00",
+      "Healthcare": "78.90",
+      "Shopping": "250.00",
+      "Rent": "1200.00"
+    }
+  }
+}
+✓ PASS: Get Transaction Statistics - Income: 5500.00, Expenses: 3022.15, Net: 2477.85
+
+--------------------------------------------------------------------------------
+Budgets Tests
+--------------------------------------------------------------------------------
+
+Testing Get All Budgets...
+REQUEST: GET /budgets
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": {
+    "data": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440020",
+        "userId": "550e8400-e29b-41d4-a716-446655440001",
+        "categoryId": "550e8400-e29b-41d4-a716-446655440010",
+        "category": {
+          "name": "Groceries",
+          "icon": "🛒"
+        },
+        "amount": "400.00",
+        "period": "MONTHLY",
+        "startDate": "2024-11-01T00:00:00.000Z",
+        "endDate": "2024-11-30T23:59:59.999Z",
+        "spent": "150.50",
+        "remaining": "249.50",
+        "percentageUsed": 37.625
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440021",
+        "userId": "550e8400-e29b-41d4-a716-446655440001",
+        "categoryId": "550e8400-e29b-41d4-a716-446655440008",
+        "category": {
+          "name": "Transportation",
+          "icon": "🚗"
+        },
+        "amount": "200.00",
+        "period": "MONTHLY",
+        "startDate": "2024-11-01T00:00:00.000Z",
+        "endDate": "2024-11-30T23:59:59.999Z",
+        "spent": "45.00",
+        "remaining": "155.00",
+        "percentageUsed": 22.5
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440022",
+        "userId": "550e8400-e29b-41d4-a716-446655440001",
+        "categoryId": "550e8400-e29b-41d4-a716-446655440009",
+        "category": {
+          "name": "Entertainment",
+          "icon": "🎬"
+        },
+        "amount": "150.00",
+        "period": "MONTHLY",
+        "startDate": "2024-11-01T00:00:00.000Z",
+        "endDate": "2024-11-30T23:59:59.999Z",
+        "spent": "65.00",
+        "remaining": "85.00",
+        "percentageUsed": 43.333
+      }
+    ],
+    "meta": {
+      "page": 1,
+      "limit": 20,
+      "total": 4,
+      "pages": 1
+    }
+  }
+}
+Sample budgets:
+  - Groceries: 400.00 (MONTHLY)
+  - Transportation: 200.00 (MONTHLY)
+  - Entertainment: 150.00 (MONTHLY)
+✓ PASS: Get All Budgets - Total: 4 (Monthly: 4, Yearly: 0)
+
+--------------------------------------------------------------------------------
+Dashboard Tests
+--------------------------------------------------------------------------------
+
+Testing Get Dashboard...
+REQUEST: GET /dashboard
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": {
+    "totalIncome": "5500.00",
+    "totalExpenses": "3022.15",
+    "netIncome": "2477.85",
+    "accountsBalance": "2477.85",
+    "recentTransactions": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440007",
+        "amount": "45.00",
+        "type": "EXPENSE",
+        "category": "Transportation",
+        "description": "Gas refill",
+        "date": "2024-11-06T00:00:00.000Z"
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440005",
+        "amount": "5000.00",
+        "type": "INCOME",
+        "category": "Salary",
+        "description": "Monthly salary",
+        "date": "2024-11-01T00:00:00.000Z"
+      }
+    ],
+    "monthlyTrend": [
+      {
+        "month": "November 2024",
+        "income": "5500.00",
+        "expenses": "3022.15"
+      },
+      {
+        "month": "October 2024",
+        "income": "0.00",
+        "expenses": "0.00"
+      }
+    ]
+  }
+}
+Dashboard Stats:
+  - Total Income: 5500.00
+  - Total Expenses: 3022.15
+  - Net Income: 2477.85
+  - Accounts Balance: 2477.85
+  - Recent Transactions: 2
+  - Monthly Trend Data: 2 months
+✓ PASS: Get Dashboard
+
+--------------------------------------------------------------------------------
+User Profile Tests
+--------------------------------------------------------------------------------
+
+Testing Get User Profile...
+REQUEST: GET /users/profile
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "email": "user@financeapp.com",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "USER",
+    "status": "ACTIVE",
+    "createdAt": "2024-11-17T10:30:00.000Z",
+    "updatedAt": "2024-11-17T10:30:00.000Z"
+  }
+}
+✓ PASS: Get User Profile - Test User (USER)
+
+--------------------------------------------------------------------------------
+Admin-Only Endpoints Tests
+--------------------------------------------------------------------------------
+
+Testing Get All Users (Admin only)...
+REQUEST: GET /users
+RESPONSE: 200 OK
+DATA: {
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "email": "user@financeapp.com",
+      "firstName": "Test",
+      "lastName": "User",
+      "role": "USER",
+      "status": "ACTIVE",
+      "createdAt": "2024-11-17T10:30:00.000Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440100",
+      "email": "admin@financeapp.com",
+      "firstName": "Admin",
+      "lastName": "User",
+      "role": "ADMIN",
+      "status": "ACTIVE",
+      "createdAt": "2024-11-17T10:30:00.000Z"
+    }
+  ]
+}
+Sample users:
+  - user@financeapp.com (USER)
+  - admin@financeapp.com (ADMIN)
+✓ PASS: Get All Users (Admin) - Total users: 2
+
+Testing Get All Users (Regular user - should fail)...
+REQUEST: GET /users
+RESPONSE: 403 Forbidden
+DATA: {
+  "success": false,
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "You do not have permission to access this resource"
+  }
+}
+✓ PASS: Authorization Check (Regular user) - Regular user correctly denied access to admin endpoint
+
+================================================================================
+TEST SUMMARY
+================================================================================
+
+Total Tests: 13
+Passed: 13
+Failed: 0
+Pass Rate: 100.00%
+
+================================================================================
+ALL TESTS PASSED!
+================================================================================
+
+================================================================================
+QUICK REFERENCE: WHAT WAS TESTED
+================================================================================
+
+HEALTH & CONNECTIVITY:
+  ✓ API server health check
+  ✓ Database connectivity
+
+AUTHENTICATION:
+  ✓ User login with valid credentials
+  ✓ Admin login with valid credentials
+  ✓ Get authenticated user profile
+  ✓ Token validation and JWT handling
+
+CATEGORIES:
+  ✓ Retrieve all 16 seeded categories (5 income + 11 expense)
+  ✓ Category structure and metadata
+
+TRANSACTIONS:
+  ✓ Get all user transactions (12 seeded)
+  ✓ Transaction statistics and aggregations
+  ✓ Income vs. expense breakdown
+  ✓ Category-wise spending
+
+BUDGETS:
+  ✓ Get all user budgets (4 seeded)
+  ✓ Budget period filtering (MONTHLY/YEARLY)
+  ✓ Budget tracking and remaining amounts
+
+DASHBOARD:
+  ✓ Dashboard statistics aggregation
+  ✓ Recent transactions display
+  ✓ Monthly trend data
+  ✓ Balance calculations
+
+USER MANAGEMENT:
+  ✓ User profile retrieval
+  ✓ Admin-only endpoints access
+  ✓ Role-based access control (RBAC)
+  ✓ Authorization enforcement
+
+================================================================================
+HOW TO RUN THIS YOURSELF
+================================================================================
+
+1. Start the backend server:
+   npm run backend:dev
+
+2. In another terminal, run the tests:
+   npm run test:api
+
+   OR:
+
+   cd backend
+   node test-api-endpoints.js
+
+3. You should see output similar to this file, ending with "ALL TESTS PASSED!"
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+If you see "Connection refused":
+  - Ensure backend is running: npm run backend:dev
+  - Check it's on http://localhost:3000
+
+If "Authentication failed":
+  - Run database seed: npm run prisma:seed
+  - Check users exist in database
+
+If tests timeout:
+  - Check backend logs for errors
+  - Increase TIMEOUT value in test-api-endpoints.js
+  - Check system resources
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+After successful test run:
+  1. Review full documentation: API_TEST_GUIDE.md
+  2. Check Swagger UI: http://localhost:3000/api/docs
+  3. Integrate into CI/CD pipeline
+  4. Add custom tests as needed
+  5. Monitor API performance
+
+================================================================================
