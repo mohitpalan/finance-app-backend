@@ -7,11 +7,18 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
 export interface Response<T> {
   success: boolean;
   data: T;
   message?: string;
-  pagination?: any;
+  pagination?: PaginationMeta;
 }
 
 @Injectable()

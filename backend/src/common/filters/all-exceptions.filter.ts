@@ -20,16 +20,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
     let code = 'INTERNAL_SERVER_ERROR';
-    let details: any = undefined;
+    let details: unknown = undefined;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
       if (typeof exceptionResponse === 'object') {
-        const errResponse = exceptionResponse as any;
-        message = errResponse.message || exception.message;
-        code = errResponse.error || exception.name;
+        const errResponse = exceptionResponse as Record<string, unknown>;
+        message = (errResponse.message as string) || exception.message;
+        code = (errResponse.error as string) || exception.name;
         details = errResponse.details;
 
         // Handle validation errors
@@ -56,15 +56,29 @@ export class AllExceptionsFilter implements ExceptionFilter {
     );
 
     // Send error response
-    response.status(status).json({
+    const errorResponse: {
+      success: boolean;
+      error: {
+        code: string;
+        message: string;
+        details?: unknown;
+      };
+      timestamp: string;
+      path: string;
+    } = {
       success: false,
       error: {
         code,
         message,
-        ...(details && { details }),
       },
       timestamp: new Date().toISOString(),
       path: request.url,
-    });
+    };
+
+    if (details) {
+      errorResponse.error.details = details;
+    }
+
+    response.status(status).json(errorResponse);
   }
 }
