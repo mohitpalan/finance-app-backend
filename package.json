@@ -1,9 +1,13 @@
 {
-  "name": "@finance-app/backend",
+  "name": "finance-app-backend",
   "version": "0.1.0",
   "description": "Finance App Backend API built with NestJS",
   "private": true,
   "main": "dist/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mohitpalan/finance-app-backend.git"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
